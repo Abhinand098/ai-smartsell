@@ -17,7 +17,7 @@ class Product(BaseModel):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all for now
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -69,7 +69,6 @@ async def analyze(file: UploadFile = File(...)):
 def generate_product_details(caption: str):
     caption_lower = caption.lower()
 
-    # Simple category detection
     if "shoe" in caption_lower:
         category = "Footwear"
         price = 1999
@@ -83,10 +82,8 @@ def generate_product_details(caption: str):
         category = "General"
         price = 999
 
-    # Title (capitalize)
     title = caption.title()
-
-    # Description
+    
     description = f"This is a {caption}. It is in good condition and ready to use."
 
     return {
