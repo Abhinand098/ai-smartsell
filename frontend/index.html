@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Marketplace</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background-image: url("1345249.png") ;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            
+        }   
+
+        .container {
+            background: white;
+            color: white;
+            padding-right: 60px;
+            padding-left: 34px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            font-size: 34px;
+            text-align: center;
+            padding-top: 4%;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 18px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        button {
+            background: #222;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: gray;
+            color: black;
+        }
+
+        img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            display: none;
+            border-radius: 8px;
+        }
+
+        #successMessage {
+            color: green;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2><b>AI SmartSell</b></h2>
+
+    <input type="file" id="fileInput" onchange="previewImage()">
+
+    <img id="preview">
+
+    <button onclick="upload()">Analyze Product</button>
+
+    <label>Title</label>
+    <input type="text" id="title">
+
+    <label>Description</label>
+    <textarea id="description"></textarea>
+
+    <label>Category</label>
+    <input type="text" id="category">
+
+    <label>Price</label>
+    <input type="number" id="price">
+
+    <button onclick="saveProduct()">Save Product</button>
+
+    <p id="successMessage">Product saved successfully</p>
+
+</div>
+
+<script>
+async function upload() {
+    let file = document.getElementById("fileInput").files[0];
+
+    let formData = new FormData();
+    formData.append("file", file);
+
+    let res = await fetch("http://127.0.0.1:8000/analyze/", {
+        method: "POST",
+        body: formData
+    });
+
+    let data = await res.json();
+
+    document.getElementById("title").value = data.title;
+    document.getElementById("description").value = data.description;
+    document.getElementById("category").value = data.category;
+    document.getElementById("price").value = data.price;
+}
+
+async function saveProduct() {
+    let productData = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        category: document.getElementById("category").value,
+        price: parseInt(document.getElementById("price").value)
+    };
+
+    let res = await fetch("http://127.0.0.1:8000/save/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(productData)
+    });
+
+    let data = await res.json();
+
+    document.getElementById("successMessage").style.display = "block";
+}
+
+function previewImage() {
+    let file = document.getElementById("fileInput").files[0];
+    let preview = document.getElementById("preview");
+
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+}
+</script>
+
+</body>
+</html>
